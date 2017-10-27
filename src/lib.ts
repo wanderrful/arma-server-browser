@@ -76,7 +76,7 @@ function fn_db_initMasterTable(client: pg.Client): void {
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName}(server_data jsonb not null)`
     }, (err, res) => {
         if (err) {
-            fn_log("DB: master table failed to create!");
+            fn_log("DB: master table failed to create!" + err.stack);
         } else {
             fn_log("DB: master table successfully created!");
         }
@@ -89,9 +89,9 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
             text: `INSERT INTO ${MasterTableName} VALUES ('${data}')`,
         }, (err, res) => {
             if (err) {
-                fn_log("DB: successfully written to master table!");
+                fn_log("DB: failed to write to master table!" + err.stack);
             } else {
-                fn_log("DB: failed to write to master table!");
+                fn_log("DB: successfully written to master table!");
             }
         });
     });
@@ -99,12 +99,12 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
 // Wipe the master table of all server data
 function fn_db_wipeMasterTableContents(client: pg.Client): void {
     client.query({
-        text: `DROP TABLE ${MasterTableName}`
+        text: `DELETE FROM ${MasterTableName}`
     }, (err, res) => {
         if (err) {
-            fn_log("DB: successfully wiped the master table!");
-        } else {
             fn_log("DB: failed to wipe the master table!");
+        } else {
+            fn_log("DB: successfully wiped the master table!");
         }
     });
 }
