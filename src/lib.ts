@@ -60,12 +60,14 @@ export function fn_db_login(): void {
     pgClient.connect( (err) => {
         if (err) {
             fn_log("DB CONNECTION ERROR");
+            
+            process.exit();
         } else {
             fn_log("DB CONNECTED");
-        }
 
-        fn_db_initMasterTable(pgClient);
-        fn_refreshServerList();
+            fn_db_initMasterTable(pgClient);
+            fn_refreshServerList();
+        }
     });
 }
 // Initialize the master table, if it does not already exist
