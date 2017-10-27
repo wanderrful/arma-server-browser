@@ -4,7 +4,8 @@
   "description": "A web app that shows a list of Arma servers.",
   "main": "index.js",
   "scripts": {
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "test": "node build/test.js"
   },
   "author": "",
   "license": "ISC",
