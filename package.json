@@ -4,13 +4,20 @@
   "description": "A web app that shows a list of Arma servers.",
   "main": "index.js",
   "scripts": {
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "test": "node build/test.js"
   },
   "author": "",
   "license": "ISC",
   "private": true,
   "dependencies": {
+    "@types/pg": "^7.1.5",
     "express": "^4.16.2",
+    "pg": "^7.3.0",
     "steam-gameserver": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/node": "^8.0.47"
   }
 }
