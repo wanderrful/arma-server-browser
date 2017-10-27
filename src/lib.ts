@@ -13,6 +13,9 @@ pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 // Define the name of the table that the web app will use for storing server data
 const MasterTableName: string = "db_masterserverlist";
 
+// Define the server list JSON object used by the front end
+export let server_data: Array<ISteamServer>;
+
 
 
 /// Interfaces
@@ -136,6 +139,7 @@ export function fn_refreshServerList(given_app_id?: number): void {
 
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
+                server_data = ServerList;
 
                 fn_log("Server query complete.  Logging off.")
 

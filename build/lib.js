@@ -97,6 +97,7 @@ function fn_refreshServerList(given_app_id) {
                 fn_log(`${res.length} server(s) found.`);
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
+                exports.server_data = ServerList;
                 fn_log("Server query complete.  Logging off.");
                 // Wipe the server list table and replace it with the new server data
                 fn_db_wipeMasterTableContents(pgClient);

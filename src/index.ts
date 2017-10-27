@@ -28,7 +28,8 @@ function main() {
     app.use("/", (req, res) => {
         res.render("index", {
             title: "hello",
-            message: "world!"
+            message: "world!",
+            server_list: lib.server_data
         }, (err, html) => {
             if (err) { 
                 lib.fn_log("ERROR: failed to render index\n" + err.stack);
