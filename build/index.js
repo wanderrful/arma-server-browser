@@ -19,7 +19,7 @@ function main() {
             message: "world!"
         }, (err, html) => {
             if (err) {
-                lib.fn_log("ERROR: failed to render index\n" + err.message);
+                lib.fn_log("ERROR: failed to render index\n" + err.stack);
             }
             else {
                 res.send(html);

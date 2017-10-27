@@ -42,7 +42,7 @@ function fn_db_initMasterTable(client) {
         values: [MasterTableName]
     }, (err, res) => {
         if (err)
-            fn_log("DB: master table failed to create!\n" + err.message);
+            fn_log("DB: master table failed to create!\n" + err.stack);
     });
 }
 // Write new data to the master table

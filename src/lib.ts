@@ -73,7 +73,7 @@ function fn_db_initMasterTable(client: pg.Client): void {
         text: "CREATE TABLE IF NOT EXISTS $1 (server_data jsonb not null)",
         values: [MasterTableName]
     }, (err, res) => {
-        if (err) fn_log("DB: master table failed to create!\n" + err.message);
+        if (err) fn_log("DB: master table failed to create!\n" + err.stack);
     });
 }
 // Write new data to the master table
