@@ -58,8 +58,7 @@ function fn_db_writeToMasterTable(client, data) {
 // Wipe the master table of all server data
 function fn_db_wipeMasterTableContents(client) {
     client.query({
-        text: `DELETE FROM $1`,
-        values: [MasterTableName]
+        text: `DELETE FROM ${MasterTableName}`
     }, (err, res) => {
         if (err)
             fn_log("DB: failed to wipe the master table!\n" + err.message);

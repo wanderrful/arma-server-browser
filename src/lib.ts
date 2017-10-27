@@ -91,8 +91,7 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
 // Wipe the master table of all server data
 function fn_db_wipeMasterTableContents(client: pg.Client): void {
     client.query({
-        text: `DELETE FROM $1`,
-        values: [MasterTableName]
+        text: `DELETE FROM ${MasterTableName}`
     }, (err, res) => {
         if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
