@@ -46,14 +46,14 @@ function fn_db_initMasterTable(client) {
 function fn_db_writeToMasterTable(client, data) {
     data.forEach((server) => {
         client.query({
-            text: `INSERT INTO TABLE ${MasterTableName} VALUES('${data}')`,
+            text: `INSERT INTO ${MasterTableName} VALUES ('${data}')`,
         });
     });
 }
 // Wipe the master table of all server data
 function fn_db_wipeMasterTableContents(client) {
     client.query({
-        text: `DELETE * FROM ${MasterTableName}`
+        text: `DROP TABLE ${MasterTableName}`
     });
 }
 // Read server data from the master table into JSON

@@ -80,14 +80,14 @@ function fn_db_initMasterTable(client: pg.Client): void {
 function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>): void {
     data.forEach( (server) => {
         client.query({
-            text: `INSERT INTO TABLE ${MasterTableName} VALUES('${data}')`,
+            text: `INSERT INTO ${MasterTableName} VALUES ('${data}')`,
         });
     });
 }
 // Wipe the master table of all server data
 function fn_db_wipeMasterTableContents(client: pg.Client): void {
     client.query({
-        text: `DELETE * FROM ${MasterTableName}`
+        text: `DROP TABLE ${MasterTableName}`
     });
 }
 // Read server data from the master table into JSON
