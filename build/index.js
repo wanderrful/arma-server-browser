@@ -17,7 +17,7 @@ function main() {
         res.render("index", {
             title: "hello",
             message: "world!",
-            server_list: JSON.stringify(lib.fn_db_getServerData())
+            server_list: JSON.stringify(lib.ServerList)
         }, (err, html) => {
             if (err) {
                 lib.fn_log("ERROR: failed to render index\n" + err.stack);

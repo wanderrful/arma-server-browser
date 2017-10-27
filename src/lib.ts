@@ -13,6 +13,8 @@ pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 // Define the name of the table that the web app will use for storing server data
 const MasterTableName: string = "db_masterserverlist";
 
+export let ServerList: Array<ISteamServer>;
+
 
 
 /// Interfaces
@@ -92,23 +94,6 @@ function fn_db_wipeMasterTableContents(): void {
     }, (err, res) => {
         if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
-}
-// Read server data from the master table into JSON
-export function fn_db_getServerData(): Array<ISteamServer> {
-    let servers: Array<ISteamServer>;
-    
-    pgClient.query({
-        text: `SELECT * FROM ${MasterTableName}`
-    }, (err, res) => {
-        if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
-        if (res.rows.length) {
-            res.rows.forEach( (server: ISteamServer) => {
-                servers.push(server);
-            })
-        }
-    });
-
-    return servers;
 }
 
 

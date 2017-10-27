@@ -64,23 +64,6 @@ function fn_db_wipeMasterTableContents() {
             fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
 }
-// Read server data from the master table into JSON
-function fn_db_getServerData() {
-    let servers;
-    pgClient.query({
-        text: `SELECT * FROM ${MasterTableName}`
-    }, (err, res) => {
-        if (err)
-            fn_log("DB: failed to wipe the master table!\n" + err.message);
-        if (res.rows.length) {
-            res.rows.forEach((server) => {
-                servers.push(server);
-            });
-        }
-    });
-    return servers;
-}
-exports.fn_db_getServerData = fn_db_getServerData;
 /// Steam-gameserver Functions
 function fn_refreshServerList(given_app_id) {
     let ServerList;
