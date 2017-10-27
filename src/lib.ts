@@ -13,9 +13,6 @@ pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 // Define the name of the table that the web app will use for storing server data
 const MasterTableName: string = "db_masterserverlist";
 
-// Define the server list JSON object used by the front end
-export let server_data: Array<ISteamServer>;
-
 
 
 /// Interfaces
@@ -79,9 +76,9 @@ function fn_db_initMasterTable(client: pg.Client): void {
     });
 }
 // Write new data to the master table
-function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>): void {
+function fn_db_writeToMasterTable(data: Array<ISteamServer>): void {
     data.forEach( (server) => {
-        client.query({
+        pgClient.query({
             text: `INSERT INTO ${MasterTableName} VALUES ('${JSON.stringify(server)}'::jsonb)`
         }, (err, res) => {
             if (err) fn_log("DB: failed to write to master table!\n" + err.message);
@@ -89,18 +86,27 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
     });
 }
 // Wipe the master table of all server data
-function fn_db_wipeMasterTableContents(client: pg.Client): void {
-    client.query({
+function fn_db_wipeMasterTableContents(): void {
+    pgClient.query({
         text: `DELETE FROM ${MasterTableName}`
     }, (err, res) => {
         if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
 }
 // Read server data from the master table into JSON
-function fn_db_getServerData(client: pg.Client): Array<ISteamServer> {
+export function fn_db_getServerData(): Array<ISteamServer> {
     let servers: Array<ISteamServer>;
     
-    fn_debug("TODO: get server data from the master table, parse it into the JSON objects, form the array of server information, and save it to the server as a cache for front end usage.");
+    pgClient.query({
+        text: `SELECT * FROM ${MasterTableName}`
+    }, (err, res) => {
+        if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
+        if (res.rows.length) {
+            res.rows.forEach( (server: ISteamServer) => {
+                servers.push(server);
+            })
+        }
+    });
 
     return servers;
 }
@@ -136,13 +142,12 @@ export function fn_refreshServerList(given_app_id?: number): void {
 
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
-                server_data = ServerList;
 
                 fn_log("Server query complete.  Logging off.")
 
                 // Wipe the server list table and replace it with the new server data
-                fn_db_wipeMasterTableContents(pgClient);
-                fn_db_writeToMasterTable(pgClient, ServerList);
+                fn_db_wipeMasterTableContents();
+                fn_db_writeToMasterTable(ServerList);
             }
             steam.logOff();
         });

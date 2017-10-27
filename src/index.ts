@@ -1,8 +1,6 @@
 import * as http from "http";
 import * as https from "https";
 import * as Express from "express";
-import * as pg from "pg";
-import * as path from "path";
 
 import * as lib from "./lib";
 
@@ -29,7 +27,7 @@ function main() {
         res.render("index", {
             title: "hello",
             message: "world!",
-            server_list: JSON.stringify(lib.server_data,null,4)
+            server_list: JSON.stringify(lib.fn_db_getServerData())
         }, (err, html) => {
             if (err) { 
                 lib.fn_log("ERROR: failed to render index\n" + err.stack);

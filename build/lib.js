@@ -45,9 +45,9 @@ function fn_db_initMasterTable(client) {
     });
 }
 // Write new data to the master table
-function fn_db_writeToMasterTable(client, data) {
+function fn_db_writeToMasterTable(data) {
     data.forEach((server) => {
-        client.query({
+        pgClient.query({
             text: `INSERT INTO ${MasterTableName} VALUES ('${JSON.stringify(server)}'::jsonb)`
         }, (err, res) => {
             if (err)
@@ -56,8 +56,8 @@ function fn_db_writeToMasterTable(client, data) {
     });
 }
 // Wipe the master table of all server data
-function fn_db_wipeMasterTableContents(client) {
-    client.query({
+function fn_db_wipeMasterTableContents() {
+    pgClient.query({
         text: `DELETE FROM ${MasterTableName}`
     }, (err, res) => {
         if (err)
@@ -65,11 +65,22 @@ function fn_db_wipeMasterTableContents(client) {
     });
 }
 // Read server data from the master table into JSON
-function fn_db_getServerData(client) {
+function fn_db_getServerData() {
     let servers;
-    fn_debug("TODO: get server data from the master table, parse it into the JSON objects, form the array of server information, and save it to the server as a cache for front end usage.");
+    pgClient.query({
+        text: `SELECT * FROM ${MasterTableName}`
+    }, (err, res) => {
+        if (err)
+            fn_log("DB: failed to wipe the master table!\n" + err.message);
+        if (res.rows.length) {
+            res.rows.forEach((server) => {
+                servers.push(server);
+            });
+        }
+    });
     return servers;
 }
+exports.fn_db_getServerData = fn_db_getServerData;
 /// Steam-gameserver Functions
 function fn_refreshServerList(given_app_id) {
     let ServerList;
@@ -94,11 +105,10 @@ function fn_refreshServerList(given_app_id) {
                 fn_log(`${res.length} server(s) found.`);
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
-                exports.server_data = ServerList;
                 fn_log("Server query complete.  Logging off.");
                 // Wipe the server list table and replace it with the new server data
-                fn_db_wipeMasterTableContents(pgClient);
-                fn_db_writeToMasterTable(pgClient, ServerList);
+                fn_db_wipeMasterTableContents();
+                fn_db_writeToMasterTable(ServerList);
             }
             steam.logOff();
         });
