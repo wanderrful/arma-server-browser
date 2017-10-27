@@ -5,7 +5,7 @@ import * as pg from "pg";
 
 // Initialize the reference to the PostgreSQL server
 const pgClient = new pg.Client({
-    connectionString: process.env.DATABASE_URI || `postgresql://localhost:5432/temp_app?user=postgres&password=${process.env.DB_PASSWORD}`
+    connectionString: process.env.DATABASE_URL || `postgresql://localhost:5432/temp_app?user=postgres&password=${process.env.DB_PASSWORD}`
 });
 pgClient.on("notification", (message) => { fn_log("DB NOTICE: " + message.payload); });
 pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
