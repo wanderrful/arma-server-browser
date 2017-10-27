@@ -13,7 +13,7 @@ pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 // Define the name of the table that the web app will use for storing server data
 const MasterTableName: string = "db_masterserverlist";
 
-export let ServerList: Array<ISteamServer>;
+export let server_data: Array<ISteamServer>;
 
 
 
@@ -74,7 +74,7 @@ function fn_db_initMasterTable(client: pg.Client): void {
     client.query({
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName} (server_data jsonb not null)`
     }, (err, res) => {
-        if (err) fn_log("DB: master table failed to create!\n" + err.stack);
+        if (err) fn_log("DB: master table failed to create!\n" + err.message);
     });
 }
 // Write new data to the master table
@@ -127,6 +127,7 @@ export function fn_refreshServerList(given_app_id?: number): void {
 
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
+                server_data = ServerList;
 
                 fn_log("Server query complete.  Logging off.")
 

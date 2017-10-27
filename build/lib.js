@@ -41,7 +41,7 @@ function fn_db_initMasterTable(client) {
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName} (server_data jsonb not null)`
     }, (err, res) => {
         if (err)
-            fn_log("DB: master table failed to create!\n" + err.stack);
+            fn_log("DB: master table failed to create!\n" + err.message);
     });
 }
 // Write new data to the master table
@@ -88,6 +88,7 @@ function fn_refreshServerList(given_app_id) {
                 fn_log(`${res.length} server(s) found.`);
                 // Parse Steam server info into the data I want
                 ServerList = res.map(fn_parseServerData);
+                exports.server_data = ServerList;
                 fn_log("Server query complete.  Logging off.");
                 // Wipe the server list table and replace it with the new server data
                 fn_db_wipeMasterTableContents();
