@@ -11,7 +11,7 @@ function main() {
     
     
     // Configure the server
-    const server_config: lib.IServerConfig = {
+    const server_config: lib.IWebServerConfig = {
         port: Number(process.env.PORT) || 8000
     };
 
