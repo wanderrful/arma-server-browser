@@ -13,6 +13,7 @@ pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 // Define the name of the table that the web app will use for storing server data
 const MasterTableName: string = "db_masterserverlist";
 
+// Define the end point for the front-end to get all stored server data
 export let server_data: Array<ISteamServer>;
 
 
@@ -100,8 +101,6 @@ function fn_db_wipeMasterTableContents(): void {
 
 /// Steam-gameserver Functions
 export function fn_refreshServerList(given_app_id?: number): void {
-    let ServerList: Array<ISteamServer>;
-
     // //This web app was made for Arma, so assume that by default, unless specified
     const app_id: number = given_app_id || 107410;
 
@@ -126,14 +125,14 @@ export function fn_refreshServerList(given_app_id?: number): void {
                 fn_log(`${res.length} server(s) found.`);
 
                 // Parse Steam server info into the data I want
-                ServerList = res.map(fn_parseServerData);
-                server_data = ServerList;
+                let servers: Array<ISteamServer> = res.map(fn_parseServerData);
+                server_data = servers;
 
                 fn_log("Server query complete.  Logging off.")
 
                 // Wipe the server list table and replace it with the new server data
                 fn_db_wipeMasterTableContents();
-                fn_db_writeToMasterTable(ServerList);
+                fn_db_writeToMasterTable(servers);
             }
             steam.logOff();
         });

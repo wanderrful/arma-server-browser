@@ -66,7 +66,6 @@ function fn_db_wipeMasterTableContents() {
 }
 /// Steam-gameserver Functions
 function fn_refreshServerList(given_app_id) {
-    let ServerList;
     // //This web app was made for Arma, so assume that by default, unless specified
     const app_id = given_app_id || 107410;
     // Only the app_id games, no empty servers
@@ -87,12 +86,12 @@ function fn_refreshServerList(given_app_id) {
             else {
                 fn_log(`${res.length} server(s) found.`);
                 // Parse Steam server info into the data I want
-                ServerList = res.map(fn_parseServerData);
-                exports.server_data = ServerList;
+                let servers = res.map(fn_parseServerData);
+                exports.server_data = servers;
                 fn_log("Server query complete.  Logging off.");
                 // Wipe the server list table and replace it with the new server data
                 fn_db_wipeMasterTableContents();
-                fn_db_writeToMasterTable(ServerList);
+                fn_db_writeToMasterTable(servers);
             }
             steam.logOff();
         });

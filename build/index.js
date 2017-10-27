@@ -19,12 +19,10 @@ function main() {
             message: "world!",
             server_list: JSON.stringify(lib.server_data)
         }, (err, html) => {
-            if (err) {
+            if (err)
                 lib.fn_log("ERROR: failed to render index\n" + err.message);
-            }
-            else {
+            else
                 res.send(html);
-            }
         });
     });
     // Actually start the server
