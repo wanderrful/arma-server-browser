@@ -96,6 +96,16 @@ function fn_db_wipeMasterTableContents(): void {
         if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
 }
+function fn_db_getMasterTableContents(): void {
+    pgClient.query({
+        text: `SELECT * FROM ${MasterTableName}`
+    }, (err, res) => {
+        if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
+
+        // TODO: figure out how to communicate the data content to the front-end from here!
+        // (because it's wrong to store it all in a variable for the front-end to reference)
+    });
+}
 
 
 

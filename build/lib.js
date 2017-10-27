@@ -64,6 +64,16 @@ function fn_db_wipeMasterTableContents() {
             fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
 }
+function fn_db_getMasterTableContents() {
+    pgClient.query({
+        text: `SELECT * FROM ${MasterTableName}`
+    }, (err, res) => {
+        if (err)
+            fn_log("DB: failed to wipe the master table!\n" + err.message);
+        // TODO: figure out how to communicate the data content to the front-end from here!
+        // (because it's wrong to store it all in a variable for the front-end to reference)
+    });
+}
 /// Steam-gameserver Functions
 function fn_refreshServerList(given_app_id) {
     // //This web app was made for Arma, so assume that by default, unless specified
