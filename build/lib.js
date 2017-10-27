@@ -39,7 +39,6 @@ exports.fn_db_login = fn_db_login;
 function fn_db_initMasterTable(client) {
     client.query({
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName} (server_data jsonb not null)`
-        //values: [MasterTableName]
     }, (err, res) => {
         if (err)
             fn_log("DB: master table failed to create!\n" + err.stack);
@@ -49,8 +48,7 @@ function fn_db_initMasterTable(client) {
 function fn_db_writeToMasterTable(client, data) {
     data.forEach((server) => {
         client.query({
-            text: `INSERT INTO $1 VALUES ('$2'::jsonb)`,
-            values: [MasterTableName, JSON.stringify(server)]
+            text: `INSERT INTO ${MasterTableName} VALUES ('${JSON.stringify(server)}'::jsonb)`
         }, (err, res) => {
             if (err)
                 fn_log("DB: failed to write to master table!\n" + err.message);
@@ -69,9 +67,9 @@ function fn_db_wipeMasterTableContents(client) {
 }
 // Read server data from the master table into JSON
 function fn_db_getServerData(client) {
-    let server_data;
+    let servers;
     fn_debug("TODO: get server data from the master table, parse it into the JSON objects, form the array of server information, and save it to the server as a cache for front end usage.");
-    return server_data;
+    return servers;
 }
 /// Steam-gameserver Functions
 function fn_refreshServerList(given_app_id) {
