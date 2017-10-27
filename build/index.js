@@ -15,7 +15,8 @@ function main() {
     //Define the server routes
     app.use("/", (req, res) => {
         res.render("index", {
-            "testing": "value"
+            title: "hello",
+            message: "world!"
         }, (err, html) => {
             if (err) {
                 lib.fn_log("ERROR: failed to render index");
