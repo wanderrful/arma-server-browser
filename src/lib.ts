@@ -139,7 +139,7 @@ export function fn_refreshServerList(given_app_id?: number): void {
     });
 
     steam.on("loggedOn", () => {
-        fn_log("Logged into Steam.  Fetching server list...")
+        fn_log("Logged into Steam.  Fetching server list...");
         steam.getServerList(filter, 10, (res: Array<ISteamServerQueryResponse>) => {
             if (!res.length) {
                 fn_log("ERROR retrieving server data! Logging off.")
