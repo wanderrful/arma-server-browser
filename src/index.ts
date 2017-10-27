@@ -1,13 +1,17 @@
 import * as http from "http";
 import * as https from "https";
 import * as Express from "express";
+import * as pg from "pg";
 
 import * as lib from "./lib";
 
 
 function main() {
+    // Initialize the web app as an Express server
     const app = Express();
-
+    
+    // Connect to the Postgres database
+    lib.fn_db_login();
     
     
     // Configure the server

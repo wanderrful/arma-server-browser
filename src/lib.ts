@@ -3,6 +3,18 @@ import * as pg from "pg";
 
 
 
+// Initialize the reference to the PostgreSQL server
+const pgClient = new pg.Client({
+    connectionString: process.env.DATABASE_URI || `postgresql://localhost:5432/temp_app?user=postgres&password=${process.env.DB_PASSWORD}`
+});
+pgClient.on("notification", (message) => { fn_log("DB NOTICE: " + message.payload); });
+pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
+
+// Define the name of the table that the web app will use for storing server data
+const MasterTableName = "db_MasterServerList";
+
+
+
 /// Interfaces
 export interface IWebServerConfig {
     port: number
@@ -15,8 +27,9 @@ interface ISteamServer {
     players: number,
     max_players: number,
 };
-// A @types/steam-gameserver does not exist, so I'm manually defining this to appease the TypeScript compiler
 interface ISteamServerQueryResponse extends ISteamServer {
+    // A @types/steam-gameserver package does not exist, so
+    // I am manually defining this to appease the TypeScript compiler
     specport: number,
     steamid: object,
     gamedir: string,
@@ -43,21 +56,59 @@ export function fn_log(text: string): void {
 
 
 /// Database Functions
-export function fn_db_initMasterTable(): void {
-    fn_debug();
+export function fn_db_login(): void {
+    pgClient.connect( (err) => {
+        if (err) {
+            fn_log("DB CONNECTION ERROR");
+        } else {
+            fn_log("DB CONNECTED");
+        }
+
+        fn_db_initMasterTable(pgClient);
+    });
+}
+// Initialize the master table, if it does not already exist
+function fn_db_initMasterTable(client: pg.Client): void {
+    client.query({
+        text: `CREATE TABLE IF NOT EXISTS ${MasterTableName}(server_data jsonb not null)`
+    });
+}
+// Write new data to the master table
+function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>): void {
+    data.forEach( (server) => {
+        client.query({
+            text: `INSERT INTO TABLE ${MasterTableName} VALUES('${data}')`,
+        });
+    });
+}
+// Read server data from the master table into JSON
+function fn_db_getServerData(client: pg.Client): Array<ISteamServer> {
+    let server_data: Array<ISteamServer>;
+    
+    fn_debug("TODO: get server data from the master table, parse it into the JSON objects, form the array of server information, and save it to the server as a cache for front end usage.");
+
+    return server_data;
+}
+// Wipe the master table of all server data
+function fn_db_wipeMasterTableContents(client: pg.Client): void {
+    client.query({
+        text: `DELETE * FROM ${MasterTableName}`
+    });
 }
 
 
+
 /// Steam-gameserver Functions
-export function fn_refreshServerList(): void {
+export function fn_refreshServerList(given_app_id?: number): void {
     let ServerList: Array<ISteamServer>;
 
-    const app_id: number = 107410;
+    // //This web app was made for Arma, so assume that by default, unless specified
+    const app_id: number = given_app_id || 107410;
 
     // Only the app_id games, no empty servers
     const filter: string = `\\appid\\${app_id}\\empty\\1`;
 
-    let steam = new Steam();
+    const steam = new Steam();
 
     // Pretend to be a dummy TF2 server so that we can perform the server query
     steam.logOn({
@@ -68,15 +119,21 @@ export function fn_refreshServerList(): void {
 
     steam.on("loggedOn", () => {
         fn_log("Logged into Steam.  Fetching server list...")
-        steam.getServerList(filter, 1, (res: Array<ISteamServerQueryResponse>) => {
-            console.log(res[0]);
+        steam.getServerList(filter, 100, (res: Array<ISteamServerQueryResponse>) => {
+            if (!res.length) {
+                fn_log("ERROR retrieving server data! Logging off.")
+            } else {
+                fn_log(`${res.length} server(s) found.`);
 
-            fn_log(`${res.length} server(s) found.`);
+                // Parse Steam server info into the data I want
+                ServerList = res.map(fn_parseServerData);
 
-            // Parse Steam server info into the data I want
-            ServerList = res.map(fn_parseServerData);
+                fn_log("Server query complete.  Logging off.")
 
-            fn_log("Server query complete.  Logging off.")
+                // Wipe the server list table and replace it with the new server data
+                fn_db_wipeMasterTableContents(pgClient);
+                fn_db_writeToMasterTable(pgClient, ServerList);
+            }
             steam.logOff();
         });
     });

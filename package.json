@@ -11,6 +11,7 @@
   "license": "ISC",
   "private": true,
   "dependencies": {
+    "@types/pg": "^7.1.5",
     "express": "^4.16.2",
     "pg": "^7.3.0",
     "steam-gameserver": "^1.0.0"
