@@ -65,6 +65,7 @@ export function fn_db_login(): void {
         }
 
         fn_db_initMasterTable(pgClient);
+        fn_refreshServerList();
     });
 }
 // Initialize the master table, if it does not already exist
@@ -81,6 +82,12 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
         });
     });
 }
+// Wipe the master table of all server data
+function fn_db_wipeMasterTableContents(client: pg.Client): void {
+    client.query({
+        text: `DELETE * FROM ${MasterTableName}`
+    });
+}
 // Read server data from the master table into JSON
 function fn_db_getServerData(client: pg.Client): Array<ISteamServer> {
     let server_data: Array<ISteamServer>;
@@ -88,12 +95,6 @@ function fn_db_getServerData(client: pg.Client): Array<ISteamServer> {
     fn_debug("TODO: get server data from the master table, parse it into the JSON objects, form the array of server information, and save it to the server as a cache for front end usage.");
 
     return server_data;
-}
-// Wipe the master table of all server data
-function fn_db_wipeMasterTableContents(client: pg.Client): void {
-    client.query({
-        text: `DELETE * FROM ${MasterTableName}`
-    });
 }
 
 
@@ -119,7 +120,7 @@ export function fn_refreshServerList(given_app_id?: number): void {
 
     steam.on("loggedOn", () => {
         fn_log("Logged into Steam.  Fetching server list...")
-        steam.getServerList(filter, 100, (res: Array<ISteamServerQueryResponse>) => {
+        steam.getServerList(filter, 10, (res: Array<ISteamServerQueryResponse>) => {
             if (!res.length) {
                 fn_log("ERROR retrieving server data! Logging off.")
             } else {

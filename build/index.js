@@ -13,7 +13,12 @@ function main() {
         port: Number(process.env.PORT) || 8000
     };
     //Define the server routes
-    //
+    app.get("/1", (req, res) => {
+        res.send("Hello world!");
+    });
+    app.get("/2", (req, res) => {
+        res.send("Hello world!");
+    });
     // Actually start the server
     http.createServer(app).listen(server_config.port);
 }

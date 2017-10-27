@@ -22,7 +22,12 @@ function main() {
 
 
     //Define the server routes
-    //
+    app.get("/1", (req, res) => {
+        res.send("Hello world!");
+    });
+    app.get("/2", (req, res) => {
+        res.send("Hello world!");
+    });
 
 
     
