@@ -11,7 +11,7 @@ pgClient.on("notification", (message) => { fn_log("DB NOTICE: " + message.payloa
 pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 
 // Define the name of the table that the web app will use for storing server data
-const MasterTableName = "db_MasterServerList";
+const MasterTableName = "db_masterserverlist";
 
 
 
@@ -74,6 +74,12 @@ export function fn_db_login(): void {
 function fn_db_initMasterTable(client: pg.Client): void {
     client.query({
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName}(server_data jsonb not null)`
+    }, (err, res) => {
+        if (err) {
+            fn_log("DB: master table failed to create!");
+        } else {
+            fn_log("DB: master table successfully created!");
+        }
     });
 }
 // Write new data to the master table
@@ -81,6 +87,12 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
     data.forEach( (server) => {
         client.query({
             text: `INSERT INTO ${MasterTableName} VALUES ('${data}')`,
+        }, (err, res) => {
+            if (err) {
+                fn_log("DB: successfully written to master table!");
+            } else {
+                fn_log("DB: failed to write to master table!");
+            }
         });
     });
 }
@@ -88,6 +100,12 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
 function fn_db_wipeMasterTableContents(client: pg.Client): void {
     client.query({
         text: `DROP TABLE ${MasterTableName}`
+    }, (err, res) => {
+        if (err) {
+            fn_log("DB: successfully wiped the master table!");
+        } else {
+            fn_log("DB: failed to wipe the master table!");
+        }
     });
 }
 // Read server data from the master table into JSON
