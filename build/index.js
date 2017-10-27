@@ -9,21 +9,27 @@ function main() {
     // Connect to the Postgres database
     lib.fn_db_login();
     // Configure the server
-    const server_config = {
-        port: Number(process.env.PORT) || 8000
-    };
+    app.set("port", Number(process.env.PORT) || 8000);
+    app.set("views", (process.cwd + "/views"));
+    app.set("view engine", "pug");
     //Define the server routes
-    app.get("/1", (req, res) => {
-        res.send("Hello world!");
-    });
-    app.get("/2", (req, res) => {
-        res.send("Hello world!");
+    app.use("/", (req, res) => {
+        res.render("index", {
+            "testing": "value"
+        }, (err, html) => {
+            if (err) {
+                lib.fn_log("ERROR: failed to render index");
+            }
+            else {
+                res.send(html);
+            }
+        });
     });
     // Actually start the server
-    http.createServer(app).listen(server_config.port, () => {
+    http.createServer(app).listen(app.get("port"), () => {
         lib.fn_log("EXPRESS SERVER RUNNING");
-        lib.fn_log("Attempting to begin setInterval...");
-        setInterval(lib.fn_refreshServerList, 5 * 60 * 1000);
+        // Begin refreshing the server list every REFRESH_RATE minutes
+        setInterval(lib.fn_refreshServerList, Number(process.env.REFRESH_RATE) * 60 * 1000);
     });
 }
 /// Run the web app

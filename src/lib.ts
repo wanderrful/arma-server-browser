@@ -16,9 +16,6 @@ const MasterTableName = "db_masterserverlist";
 
 
 /// Interfaces
-export interface IWebServerConfig {
-    port: number
-};
 interface ISteamServer {
     name: string,
     addr: string,
@@ -76,11 +73,7 @@ function fn_db_initMasterTable(client: pg.Client): void {
         text: "CREATE TABLE IF NOT EXISTS $1(server_data jsonb not null)",
         values: [MasterTableName]
     }, (err, res) => {
-        if (err) {
-            fn_log("DB: master table failed to create!" + err.message);
-        } else {
-            fn_log("DB: master table successfully created!");
-        }
+        if (err) fn_log("DB: master table failed to create!\n" + err.message);
     });
 }
 // Write new data to the master table
@@ -90,11 +83,7 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
             text: `INSERT INTO $1 VALUES ('$2'::jsonb)`,
             values: [MasterTableName, JSON.stringify(server)]
         }, (err, res) => {
-            if (err) {
-                fn_log("DB: failed to write to master table!" + err.message);
-            } else {
-                fn_log("DB: successfully written to master table!");
-            }
+            if (err) fn_log("DB: failed to write to master table!\n" + err.message);
         });
     });
 }
@@ -104,11 +93,7 @@ function fn_db_wipeMasterTableContents(client: pg.Client): void {
         text: `DELETE FROM $1`,
         values: [MasterTableName]
     }, (err, res) => {
-        if (err) {
-            fn_log("DB: failed to wipe the master table!");
-        } else {
-            fn_log("DB: successfully wiped the master table!");
-        }
+        if (err) fn_log("DB: failed to wipe the master table!\n" + err.message);
     });
 }
 // Read server data from the master table into JSON
