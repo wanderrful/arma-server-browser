@@ -10,7 +10,6 @@ function main() {
     lib.fn_db_login();
     // Configure the server
     app.set("port", Number(process.env.PORT) || 8000);
-    app.set("views", (process.cwd + "/views"));
     app.set("view engine", "pug");
     //Define the server routes
     app.use("/", (req, res) => {

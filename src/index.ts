@@ -2,6 +2,7 @@ import * as http from "http";
 import * as https from "https";
 import * as Express from "express";
 import * as pg from "pg";
+import * as path from "path";
 
 import * as lib from "./lib";
 
@@ -18,7 +19,6 @@ function main() {
 
     // Configure the server
     app.set("port", Number(process.env.PORT) || 8000);
-    app.set("views", (process.cwd + "/views") );
     app.set("view engine", "pug");
 
 

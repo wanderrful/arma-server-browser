@@ -11,7 +11,7 @@ pgClient.on("notification", (message) => { fn_log("DB NOTICE: " + message.payloa
 pgClient.on("error", (err) => { fn_log("DB ERROR: " + err.message); });
 
 // Define the name of the table that the web app will use for storing server data
-const MasterTableName = "db_masterserverlist";
+const MasterTableName: string = "db_masterserverlist";
 
 
 
