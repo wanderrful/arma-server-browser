@@ -12,5 +12,9 @@
   "dependencies": {
     "express": "^4.16.2",
     "steam-gameserver": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/node": "^8.0.47"
   }
 }
