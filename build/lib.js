@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Steam = require("steam-gameserver");
 ;
 ;
-/// Functions
+/// Utility Functions
 function fn_debug(text) {
     throw `Not yet implemented! ${text}`;
 }
@@ -18,9 +18,8 @@ function fn_db_initMasterTable() {
 }
 exports.fn_db_initMasterTable = fn_db_initMasterTable;
 /// Steam-gameserver Functions
-function fn_getServers() {
-    fn_log("Enter fn_getServers()");
-    let listOfServers;
+function fn_refreshServerList() {
+    let ServerList;
     const app_id = 107410;
     // Only the app_id games, no empty servers
     const filter = `\\appid\\${app_id}\\empty\\1`;
@@ -32,24 +31,27 @@ function fn_getServers() {
         "gameVersion": "3561198"
     });
     steam.on("loggedOn", () => {
-        fn_log("Logged into " + steam.steamID.steam3());
-        steam.getServerList(filter, 2, (res) => {
-            if (!res.length) {
-                fn_log("ERROR: NO SERVERS FOUND");
-            }
-            else {
-                fn_log("Server list:");
-                console.log(res.length);
-                fn_log("End server list");
-            }
+        fn_log("Logged into Steam.  Fetching server list...");
+        steam.getServerList(filter, 1, (res) => {
+            console.log(res[0]);
+            fn_log(`${res.length} server(s) found.`);
+            // Parse Steam server info into the data I want
+            ServerList = res.map(fn_parseServerData);
             fn_log("Server query complete.  Logging off.");
             steam.logOff();
         });
     });
-    if (!listOfServers.length) {
-        fn_debug("NO SERVERS FOUND");
-    }
-    return listOfServers;
 }
-exports.fn_getServers = fn_getServers;
+exports.fn_refreshServerList = fn_refreshServerList;
+// Convert a Steam server query response into the data object format that I need
+function fn_parseServerData(data) {
+    return {
+        name: data.name,
+        addr: data.addr,
+        gameport: data.gameport,
+        map: data.map,
+        players: data.players,
+        max_players: data.max_players
+    };
+}
 //# sourceMappingURL=lib.js.map

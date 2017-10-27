@@ -8,17 +8,31 @@ export interface IWebServerConfig {
     port: number
 };
 interface ISteamServer {
-    addr: string,
-    port: number,
     name: string,
+    addr: string,
+    gameport: number,
+    map: string,
     players: number,
     max_players: number,
-    map: string
 };
+// A @types/steam-gameserver does not exist, so I'm manually defining this to appease the TypeScript compiler
+interface ISteamServerQueryResponse extends ISteamServer {
+    specport: number,
+    steamid: object,
+    gamedir: string,
+    version: string,
+    product: string,
+    region: number,
+    bots: number,
+    secure: boolean,
+    dedicated: boolean,
+    os: string,
+    gametype: string
+}
 
 
 
-/// Functions
+/// Utility Functions
 export function fn_debug(text?: string): void {
     throw `Not yet implemented! ${text}`;
 }
@@ -35,9 +49,8 @@ export function fn_db_initMasterTable(): void {
 
 
 /// Steam-gameserver Functions
-export function fn_getServers(): Array<ISteamServer> {
-    fn_log("Enter fn_getServers()");
-    let listOfServers: Array<ISteamServer>;
+export function fn_refreshServerList(): void {
+    let ServerList: Array<ISteamServer>;
 
     const app_id: number = 107410;
 
@@ -54,25 +67,29 @@ export function fn_getServers(): Array<ISteamServer> {
     });
 
     steam.on("loggedOn", () => {
-        fn_log("Logged into " + steam.steamID.steam3());
+        fn_log("Logged into Steam.  Fetching server list...")
+        steam.getServerList(filter, 1, (res: Array<ISteamServerQueryResponse>) => {
+            console.log(res[0]);
 
-        steam.getServerList(filter, 2, (res) => {
-            if (!res.length) {
-                fn_log("ERROR: NO SERVERS FOUND");
-            } else {
-                fn_log("Server list:");
-                console.log(res.length);
-                fn_log("End server list");
-            }
+            fn_log(`${res.length} server(s) found.`);
+
+            // Parse Steam server info into the data I want
+            ServerList = res.map(fn_parseServerData);
 
             fn_log("Server query complete.  Logging off.")
             steam.logOff();
         });
     });
+}
 
-    if (!listOfServers.length) {
-        fn_debug("NO SERVERS FOUND");
-    }
-
-    return listOfServers;
+// Convert a Steam server query response into the data object format that I need
+function fn_parseServerData(data: ISteamServerQueryResponse): ISteamServer {
+    return {
+        name: data.name,
+        addr: data.addr,
+        gameport: data.gameport,
+        map: data.map,
+        players: data.players,
+        max_players: data.max_players
+    };
 }
