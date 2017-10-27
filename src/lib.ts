@@ -70,8 +70,8 @@ export function fn_db_login(): void {
 // Initialize the master table, if it does not already exist
 function fn_db_initMasterTable(client: pg.Client): void {
     client.query({
-        text: "CREATE TABLE IF NOT EXISTS $1 (server_data jsonb not null)",
-        values: [MasterTableName]
+        text: `CREATE TABLE IF NOT EXISTS ${MasterTableName} (server_data jsonb not null)`
+        //values: [MasterTableName]
     }, (err, res) => {
         if (err) fn_log("DB: master table failed to create!\n" + err.stack);
     });
