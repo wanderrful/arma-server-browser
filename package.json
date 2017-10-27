@@ -1,0 +1,16 @@
+{
+  "name": "arma-server-browser",
+  "version": "1.0.0",
+  "description": "A web app that shows a list of Arma servers.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node build/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "express": "^4.16.2",
+    "steam-gameserver": "^1.0.0"
+  }
+}
