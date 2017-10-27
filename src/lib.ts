@@ -76,7 +76,7 @@ function fn_db_initMasterTable(client: pg.Client): void {
         text: `CREATE TABLE IF NOT EXISTS ${MasterTableName}(server_data jsonb not null)`
     }, (err, res) => {
         if (err) {
-            fn_log("DB: master table failed to create!" + err.stack);
+            fn_log("DB: master table failed to create!" + err.message);
         } else {
             fn_log("DB: master table successfully created!");
         }
@@ -89,7 +89,7 @@ function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>):
             text: `INSERT INTO ${MasterTableName} VALUES ('${data}'::jsonb)`,
         }, (err, res) => {
             if (err) {
-                fn_log("DB: failed to write to master table!" + err.stack);
+                fn_log("DB: failed to write to master table!" + err.message);
             } else {
                 fn_log("DB: successfully written to master table!");
             }
