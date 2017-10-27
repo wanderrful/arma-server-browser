@@ -20,7 +20,11 @@ function main() {
         res.send("Hello world!");
     });
     // Actually start the server
-    http.createServer(app).listen(server_config.port);
+    http.createServer(app).listen(server_config.port, () => {
+        lib.fn_log("EXPRESS SERVER RUNNING");
+        lib.fn_log("Attempting to begin setInterval...");
+        setInterval(lib.fn_refreshServerList, 5 * 1000);
+    });
 }
 /// Run the web app
 main();
