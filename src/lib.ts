@@ -84,11 +84,9 @@ function fn_db_initMasterTable(client: pg.Client): void {
 }
 // Write new data to the master table
 function fn_db_writeToMasterTable(client: pg.Client, data: Array<ISteamServer>): void {
-    fn_log(`INSERT INTO ${MasterTableName} VALUES ('${data[0]}'::jsonb)`); //debug
-
     data.forEach( (server) => {
         client.query({
-            text: `INSERT INTO ${MasterTableName} VALUES ('${server}'::jsonb)`,
+            text: `INSERT INTO ${MasterTableName} VALUES ('${JSON.stringify(server)}'::jsonb)`,
         }, (err, res) => {
             if (err) {
                 fn_log("DB: failed to write to master table!" + err.message);
