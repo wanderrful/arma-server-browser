@@ -4,8 +4,8 @@ const Steam = require("steam-gameserver");
 ;
 ;
 /// Functions
-function fn_debug() {
-    throw "Not yet implemented!";
+function fn_debug(text) {
+    throw `Not yet implemented! ${text}`;
 }
 exports.fn_debug = fn_debug;
 function fn_log(text) {
@@ -20,6 +20,7 @@ exports.fn_db_initMasterTable = fn_db_initMasterTable;
 /// Steam-gameserver Functions
 function fn_getServers() {
     fn_log("Enter fn_getServers()");
+    let listOfServers;
     const app_id = 107410;
     // Only the app_id games, no empty servers
     const filter = `\\appid\\${app_id}\\empty\\1`;
@@ -34,7 +35,7 @@ function fn_getServers() {
         fn_log("Logged into " + steam.steamID.steam3());
         steam.getServerList(filter, 2, (res) => {
             if (!res.length) {
-                fn_log("NO SERVERS FOUND");
+                fn_log("ERROR: NO SERVERS FOUND");
             }
             else {
                 fn_log("Server list:");
@@ -45,6 +46,10 @@ function fn_getServers() {
             steam.logOff();
         });
     });
+    if (!listOfServers.length) {
+        fn_debug("NO SERVERS FOUND");
+    }
+    return listOfServers;
 }
 exports.fn_getServers = fn_getServers;
 //# sourceMappingURL=lib.js.map

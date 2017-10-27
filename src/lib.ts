@@ -1,4 +1,5 @@
 import * as Steam from "steam-gameserver";
+import * as pg from "pg";
 
 
 
@@ -6,7 +7,7 @@ import * as Steam from "steam-gameserver";
 export interface IWebServerConfig {
     port: number
 };
-interface ISteamServerConfig {
+interface ISteamServer {
     addr: string,
     port: number,
     name: string,
@@ -18,8 +19,8 @@ interface ISteamServerConfig {
 
 
 /// Functions
-export function fn_debug(): void {
-    throw "Not yet implemented!";
+export function fn_debug(text?: string): void {
+    throw `Not yet implemented! ${text}`;
 }
 export function fn_log(text: string): void {
     console.log("***", text);
@@ -34,8 +35,9 @@ export function fn_db_initMasterTable(): void {
 
 
 /// Steam-gameserver Functions
-export function fn_getServers(): void {
+export function fn_getServers(): Array<ISteamServer> {
     fn_log("Enter fn_getServers()");
+    let listOfServers: Array<ISteamServer>;
 
     const app_id: number = 107410;
 
@@ -56,7 +58,7 @@ export function fn_getServers(): void {
 
         steam.getServerList(filter, 2, (res) => {
             if (!res.length) {
-                fn_log("NO SERVERS FOUND");
+                fn_log("ERROR: NO SERVERS FOUND");
             } else {
                 fn_log("Server list:");
                 console.log(res.length);
@@ -67,4 +69,10 @@ export function fn_getServers(): void {
             steam.logOff();
         });
     });
+
+    if (!listOfServers.length) {
+        fn_debug("NO SERVERS FOUND");
+    }
+
+    return listOfServers;
 }

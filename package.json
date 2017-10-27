@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "express": "^4.16.2",
+    "pg": "^7.3.0",
     "steam-gameserver": "^1.0.0"
   },
   "devDependencies": {
